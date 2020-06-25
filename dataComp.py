@@ -33,21 +33,22 @@ plt.title('Random Image 3', fontSize = 15)
 plt.show()
 
 #-----------------------------------------------------------
-# Mario 
+# Interpolate
 
 import matplotlib.image as mim
-G = mim.imread('mario.png')
+G = mim.imread('pipp.png')
 
 #make it square
-dim = min(len(G[0]), len(G))
-G_sq = G[0:dim, 0:dim]
-#plt.imshow(1-G_sq, cmap = 'binary')
+a,b = (len(G), len(G[0]))
+dim = min(a,b)
+G_sq = G[int(a/2-dim/2) : int(a/2 + dim/2)+1, int(b/2 - dim/2): int(b/2 + dim/2)+1,:]
+
 
 def mush(img):
     '''
     returns the average
     '''
-    return np.mean(img)
+    return np.mean(np.mean(img, axis = 0), axis = 0)
 
 #interpolate
 def sqs(img, img_):
@@ -64,31 +65,33 @@ def sqs(img, img_):
         for j in range(sml):
             
             #mush temp
-            m_tmp = img[cut*i:cut*(i+1), cut*j:cut*(j+1)]
-            img_[i,j] = mush(m_tmp)
+            m_tmp = img[cut*i:cut*(i+1), cut*j:cut*(j+1),:]
+            img_[i,j,:] = mush(m_tmp)
              
     return img_ 
 
-plt.figure(figsize = (8,8))
+plt.figure(figsize = (10,10))
 
-G_sm = sqs(G_sq, np.zeros([20,20]))
+G_sm = sqs(G_sq, np.zeros([20,20,3]))
 plt.subplot(2,2,1)
-plt.imshow(1-G_sm, cmap = 'binary')
+plt.imshow(G_sm, cmap = 'binary')
 plt.title('20 X 20 Pixel Space', fontSize = 15)
 
-G_sm = sqs(G_sq, np.zeros([40,40]))
+G_sm = sqs(G_sq, np.zeros([40,40, 3]))
 plt.subplot(2,2,2)
-plt.imshow(1-G_sm, cmap = 'binary')
+plt.imshow(G_sm, cmap = 'binary')
 plt.title('40 X 40 Pixel Space', fontSize = 15)
 
-G_sm = sqs(G_sq, np.zeros([100,100]))
+G_sm = sqs(G_sq, np.zeros([100,100, 3]))
 plt.subplot(2,2,3)
-plt.imshow(1-G_sm, cmap = 'binary')
+plt.imshow(G_sm, cmap = 'binary')
 plt.title('100 X 100 Pixel Space', fontSize = 15)
 
 plt.subplot(2,2,4)
-plt.imshow(1-G_sq, cmap = 'binary')
+plt.imshow(G_sq, cmap = 'binary')
 plt.title('Original - 216 X 216 Pixel Space', fontSize = 15)
 plt.show()
+
+
 
 
